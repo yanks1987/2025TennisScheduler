@@ -1,0 +1,29 @@
+name: Weekly Weather Check
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Runs at 6 AM every Monday
+  workflow_dispatch:      # Allows manual trigger for testing
+
+jobs:
+  check-weather:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Dependencies
+        run: npm install axios nodemailer
+          
+      - name: Run Weather Check
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        run: node weather-check.js 
